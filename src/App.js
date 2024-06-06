@@ -1,65 +1,32 @@
 import React from "react";
-import Header from "./components/Header";
-import Users from "./components/Users";
-import AddUser from "./components/AddUser";
+import "./css/main.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Layout from "./Layout/Layout";
+import Main from "./Main/Main";
+import Detail from "./Main/Detail";
 
-class App extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
 
-        users: [
-            {
-                id: 1,
-                firstname: 'Bob',
-                lastname: 'Marley',
-                bio: 'Lorem ipsum dlor',
-                age: 40,
-                isHappy: true
-            },
-            {
-                id: 2,
-                firstname: 'John',
-                lastname: 'Doe',
-                bio: 'Lorem ipsum dolor',
-                age: 22,
-                isHappy: false
-            }
-        ]
+export default function App() {
 
-    }
-    this.addUser = this.addUser.bind(this)
-    this.deleteUser = this.deleteUser.bind(this)
-    this.editUser = this.editUser.bind(this)
+  const spisok = React.useRef([
+    {
+      title: 'Основные',
+      color: 'violet',
+      deals: [],
+    },
+  ]);
+
+  const [ spisokRender, setSpisokRender ] = React.useState(spisok.current);
+
+
+  return (
+    <BrowserRouter>
+    <Routes>
+      <Route path='/' element={<Layout spisok={spisok} setSpisokRender={setSpisokRender}/>}>
+        <Route index element={<Main spisokRender={spisokRender} setSpisokRender={setSpisokRender} spisok={spisok}/>}/>
+        <Route path=':id' element={<Detail spisok={spisok}/>}/>
+      </Route>
+    </Routes>
+    </BrowserRouter>
+  )
 }
-
-  render () {
-    return (<div>
-    <Header />
-    <main>
-      <Users users={this.state.users} onEdit={this.editUser} onDelete={this.deleteUser}/>  </main>
-    <aside>
-        <AddUser onAdd={this.addUser}/>
-      </aside>
-</div>)
-  }
-  deleteUser(id) {
-    this.setState({
-      users: this.state.users.filter((el) => el.id !== id)
-    })
-  }
-  editUser(user) {
-    let allUsers = this.state.users
-    allUsers[user.id-1] = user
-
-    this.setState({users: []}, () => {
-      this.setState({users: [...allUsers]})
-    })
-  }
-  addUser(user) {
-    const id = this.state.users.length + 1
-    this.setState({ users: [...this.state.users, {id, ...user}]})
-  }
-}
-
-export default App
